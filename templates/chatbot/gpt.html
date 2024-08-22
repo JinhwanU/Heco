@@ -1,0 +1,81 @@
+  <!-- 식단 추천 -->
+  <div class="card mt-5">
+    <div class="card-body">
+      <h5 class="card-title text-center">식단 추천</h5>
+      <form id="meal-recommendation-form">
+        <!-- 아침, 점심, 저녁 체크 -->
+        <fieldset class="row mb-3">
+          <legend class="col-form-label col-sm-3 pt-0">식사</legend>
+          <div class="col-sm-9">
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="mealType" id="breakfast" value="breakfast" checked>
+              <label class="form-check-label" for="breakfast">아침</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="mealType" id="lunch" value="lunch">
+              <label class="form-check-label" for="lunch">점심</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="mealType" id="dinner" value="dinner">
+              <label class="form-check-label" for="dinner">저녁</label>
+            </div>
+          </div>
+        </fieldset>
+        <!-- 칼로리 선택 -->
+        <div class="row mb-3">
+          <label for="calories" class="col-sm-3 col-form-label">칼로리</label>
+          <div class="col-sm-9">
+            <select class="form-select" name="calories" id="calories" required>
+              <option value="1">200 ~ 300 cal</option>
+              <option value="2">300 ~ 400 cal</option>
+              <option value="3">400 ~ 500 cal</option>
+              <option value="4">500 ~ 600 cal</option>
+            </select>
+          </div>
+        </div>
+        <!-- 메뉴 -->
+        <fieldset class="row mb-3">
+          <legend class="col-sm-3 col-form-label">구성</legend>
+          <div class="col-sm-9">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="menu" id="korean" value="korean">
+              <label class="form-check-label" for="korean">한식위주 - 밥 or 국</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="menu" id="western" value="western">
+              <label class="form-check-label" for="western">양식</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="menu" id="salad" value="salad">
+              <label class="form-check-label" for="salad">샐러드 종류</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="menu" id="sandwich" value="sandwich">
+              <label class="form-check-label" for="sandwich">샌드위치 종류</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="menu" id="yogurt" value="yogurt">
+              <label class="form-check-label" for="yogurt">요거트 종류</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="menu" id="protein" value="protein">
+              <label class="form-check-label" for="protein">단백질</label>
+            </div>
+          </div>
+        </fieldset>
+        <!-- 제출 버튼-->
+        <div class="d-flex justify-content-center">
+          <button type="submit" class="btn btn-primary">제출하기</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- GPT 결과 -->
+  <div class="card mt-3">
+    <div class="card-body">
+      <h5 class="card-title text-center">GPT 추천 식단</h5>
+      <textarea class="form-control" id="gpt-recommendation" rows="3" readonly></textarea>
+    </div>
+  </div>
+</div>

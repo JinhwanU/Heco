@@ -1,0 +1,70 @@
+<!-- board_create.html -->
+{% extends 'base.html' %}
+{% block page_title %}
+<title>게시글 작성</title>
+{% endblock page_title %}
+
+{% block content %}
+<br><br><br>
+<!-- 이전 페이지 버튼 -->
+<div class="container mt-5 d-md-flex justify-content-md-start mb-3">
+    <div class="shadow-sm mt-4 ">
+      <button type="button" class="shadow-sm btn btn-outline-primary" onclick="goBack()">이전 페이지로 돌아가기</button>
+    </div>
+</div>
+
+<!-- 게시글 수정하기 -->
+<div class="container row mt-5 mx-auto row-cols-1 mb-4 shadow-sm border border-dark-subtle bg-body-tertiary bg-light rounded-3">
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="container-fluid mx-auto px-5 mt-3 pt-2">
+            <h3>게시글 수정하기</h3>
+            <!-- 카테고리 선택 -->
+            <div class="row mb-3 input-group mt-5">
+                <label for="category"class="col-sm-2 col-form-label">카테고리</label>
+                <div class="col-sm-8">
+                    <select class="form-select ms-3" aria-label="category" name="category" id="category" disabled>
+                        <option value="1" {% if post.category == "1" %}selected{% endif %}>식단</option>
+                        <option value="2" {% if post.category == "2" %}selected{% endif %}>운동 - 초급</option>
+                        <option value="3" {% if post.category == "3" %}selected{% endif %}>운동 - 중급</option>
+                        <option value="4" {% if post.category == "4" %}selected{% endif %}>운동 - 고급</option>
+                    </select>
+                </div>      
+            </div>
+            <!-- 제목 입력 -->
+            <div class="row mb-3 input-group">
+                <label for="title" class="col-sm-2 col-form-label">제목</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control ms-3" id="title" name="title" value="{{ post.title }}" required>
+                </div>
+            </div>   
+            <!-- 내용 작성  -->
+            <div class="row mb-3 input-group">
+                <label for="contents" class="col-sm-2 col-form-label">내용 작성</label>
+                <div class="col-sm-8">
+                    <textarea class="form-control ms-3" id="contents" name="contents" rows="5" required>{{ post.contents }}</textarea>
+                </div>
+            </div>
+            <!-- 이미지 파일 업로드 -->
+            <div class="row mb-3 input-group" >
+                <label for="image" class="col-sm-2 col-form-label">이미지 업로드</label>
+                <div class="col-sm-8">
+                    <img src="{{ post.image_url }}" alt="Post image" style="max-width: 50%;"> 
+                    <input type="file" class="form-control ms-3" id="image" name="image" required>
+                </div>
+            </div>
+            <input type="hidden" name="id" value="{{ id }}">
+            <input type="hidden" name="username" value="{{ username }}">
+            <!-- 게시 버튼 -->
+            <div class="d-grid col-3 mx-auto mt-5">
+                <button type="submit" class="btn btn-outline-primary" formaction="{% url 'board:update' post_id=post.id %}?id={{ id }}&username={{ username }}">글 수정</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    function goBack() {
+      window.history.back();
+    }
+</script>
+{% endblock content %}

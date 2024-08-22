@@ -1,0 +1,44 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+<div>Board main.html</div>
+<h1>게시판 페이지 </h1>
+
+<!-- 게시판 카테고리 -->
+<form method="GET" action="{% url 'post:select_list' %}">
+    {% csrf_token %}
+    <button name="category" value="1">식단</button>    
+    <button name="category" value="2">초급자</button>    
+    <button name="category" value="3">중급자</button>    
+    <button name="category" value="4">고급자</button>    
+</form>
+
+<!-- 게시판 글 작성 페이지 이동 (로그인시에만) -->
+{% if username %}
+<form method="GET" action="{% url 'post:insert_page' %}">
+    {% csrf_token %}
+    <input type="hidden"  name="id" value="{{ id }}">
+    <input type="hidden"  name="username" value="{{ username }}">
+    <input type="submit"  value="글작성">
+</form>
+{% else %}
+<input type="hidden" value="글작성">
+{% endif %}
+
+<table>
+{% for list in postlist%}
+    <ul>
+        <li>
+            <a href="{% url 'post:select_detail' list.id %}?id={{ id }}&username={{ username }}">
+                {{ list.title }}
+                <br>
+                {{ list.contents }}
+            </a>
+        </li>
+    </ul>
+{% endfor %}
+</table>
+
+
+{% endblock %}

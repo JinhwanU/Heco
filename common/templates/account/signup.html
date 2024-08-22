@@ -1,0 +1,59 @@
+<!-- register.html -->
+{% extends 'base.html' %}
+{% load static %}
+{% block page_title %}
+<title>회원가입</title>
+{% endblock page_title %}
+
+{% block navbar %}{% endblock navbar %}
+
+
+{% block content %}
+<!-- 회원가입 -->
+<div class="container mt-5 pt-5">
+  <div class="row justify-content-md-center" >
+    <form class="">
+        <div class="row mb-3">
+          <label for="inputid" class="col-sm-2 col-form-label">ID</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="inputid">
+          </div>
+        </div>
+        <div class="row mb-3">
+          <label for="inputPassword" class="col-sm-2 col-form-label">Password</label>
+          <div class="col-sm-10">
+            <input type="password" class="form-control" id="inputPassword" name="password">
+          </div>
+        </div>
+        <div class="row mb-3">
+          <label for="inputPassword2" class="col-sm-2 col-form-label">Password check</label>
+          <div class="col-sm-10">
+            <input type="password" class="form-control" id="inputPassword2" name="Password2" onkeyup="checkPasswordMatch()">
+            <div id="passwordMatchStatus"></div>
+          </div>
+        </div>
+        <div class="row justify-content-md-center">
+            <button type="submit" class="btn btn-primary" id="submitButton" disabled>Sign up</button>
+        </div>
+    </form>
+  </div>
+</div>
+<script>
+  function checkPasswordMatch() {
+    var password = document.getElementById("inputPassword").value;
+    var confirmPassword = document.getElementById("inputPassword2").value;
+    var passwordMatchStatus = document.getElementById("passwordMatchStatus");
+    var submitButton = document.getElementById("submitButton");
+  
+    if (password === confirmPassword) {
+      passwordMatchStatus.textContent = "비밀번호가 일치합니다.";
+      passwordMatchStatus.style.color = "blue";
+      submitButton.disabled = false;
+    } else {
+      passwordMatchStatus.textContent = "비밀번호가 일치하지 않습니다.";
+      passwordMatchStatus.style.color = "red";
+      submitButton.disabled = true;
+    }
+  }
+  </script>
+{% endblock content %}

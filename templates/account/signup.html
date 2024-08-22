@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block page_title %}
+<title>회원가입</title>
+{% endblock page_title %}
+
+{% block content %}
+<!-- 이전 페이지 버튼 -->
+<br><br>
+<div class="container mt-5 d-md-flex justify-content-md-start mb-3">
+  <div class="shadow-sm mt-4 ">
+    <button type="button" class="shadow-sm btn btn-outline-primary" onclick="goBack()">이전 페이지로 돌아가기</button>
+  </div>
+</div>
+<!-- main -->
+<div class="container mt-2">
+  <div class="row justify-content-md-center mt-2 mx-auto row-cols-1" >
+    <form method="post" action="">
+      <div class="container-fluid mx-auto px-5 mt-3 pt-2">
+        <h3>회원가입</h3><hr>
+          {% csrf_token %}
+          {% include 'form_error.html' %}
+          <div class="row mb-3">
+            <label for="username" class="col-sm-2 col-form-label">ID:</label>
+            <div class="col-sm-10">
+              <input type="text" name="username" id="username" value="{{form.username.value|default_if_none:''}}"class="form-control">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label for="password1" class="col-sm-2 col-form-label">Password:</label>
+            <div class="col-sm-10">
+              <input type="password" name="password1" id="password1" value="{{form.password1.value|default_if_none:''}}" class="form-control">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label for="password2" class="col-sm-2 col-form-label">Write Again:</label>
+            <div class="col-sm-10">
+              <input type="password" name="password2" id="password2" value="{{form.password2.value|default_if_none:''}}" class="form-control">
+              <div id="passwordMatchStatus"></div>
+            </div>
+          </div>
+          <div class="row justify-content-md-center">
+            <button type="submit" class="btn btn-primary" id="submitButton" disabled>Create</button>
+          </div>
+          <div class="mt-3 ">
+            <a href="{% url 'common:login' %}" class="fw-semibold link-underline link-underline-opacity-0"> 이미 회원이라면 로그인하러가기 -></a>
+          </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- 비밓번호 (빨 - 일치x, 파 - 일치o) -->
+<script>
+  // 스크립트를 실행할 때 페이지의 DOM 구조가 완전히 로드된 후에 실행되도록 설정
+  document.addEventListener("DOMContentLoaded", function() {
+
+    function checkPasswordMatch() {
+      var password = document.getElementById("password1").value;
+      var confirmPassword = document.getElementById("password2").value;
+      var passwordMatchStatus = document.getElementById("passwordMatchStatus");
+      var submitButton = document.getElementById("submitButton");
+    
+      if (password === confirmPassword) {
+        passwordMatchStatus.textContent = "비밀번호가 일치합니다.";
+        passwordMatchStatus.style.color = "blue";
+        submitButton.disabled = false;
+      } else {
+        passwordMatchStatus.textContent = "비밀번호가 일치하지 않습니다.";
+        passwordMatchStatus.style.color = "red";
+        submitButton.disabled = true;
+      }
+    }
+
+    // 비밀번호 일치 여부를 확인하는 이벤트 리스너를 등록
+    var passwordInputs = document.querySelectorAll("input[type='password']");
+    for (var i = 0; i < passwordInputs.length; i++) {
+      passwordInputs[i].addEventListener("input", checkPasswordMatch);
+    }
+  });
+</script>
+<!-- 뒤로가기 -->
+<script>
+  function goBack() {
+    window.history.back();
+  }
+</script>
+{% endblock content %}

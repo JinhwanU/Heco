@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% block page_title %}
+<title>게시글 상세보기</title>
+{% endblock page_title %}
+
+{% block content %}
+<br><br><br>
+<!-- 이전 페이지 버튼 -->
+<div class="container mt-5 d-md-flex justify-content-md-start mb-3">
+    <div class="shadow-sm mt-4 ">
+      <button type="button" class="shadow-sm btn btn-outline-primary" onclick="goBack()">이전 페이지로 돌아가기</button>
+    </div>
+</div>
+<!-- main -->
+<div class="container mx-auto mt-5">
+    <div class=" row card mb-4 shadow-sm border border-dark-subtle bg-body-tertiary bg-light">   
+        <div class="card-body">
+        <img src="{{ post.image_url }}" class="card-img-top img-fluid" style="max-width: 50%;" alt="...">
+        <h5 class="card-title">{{ post.title }}</h5>
+        <p>Author: {{ post.user_id.username }}</p>
+        <p class="card-text">{{ post.contents }}</p>
+        <p class="card-text"><small class="text-body-secondary">Created at: {{ post.created_at }}</small></p>
+        </div>
+    </div>
+    <!-- 사용자는 댓글등록 버튼 출력 -->
+    <div class="row card mb-3  shadow-sm border border-dark-subtle bg-body-tertiary bg-light">
+        <h5>댓글</h5>
+        <hr>
+        {% for comment in comments %}
+            {% if comment.user_id.username == request.session.username %}
+                <div style="position: relative; display: inline-block;">
+                    <a id="comment_delete" onclick="return deleteClick()" style="position: absolute; top: 0px; right: 10px;" href="{% url 'board:comment_delete' comment_id=comment.id %}?id={{ id }}&username={{ username }}&post_id={{ post.id }}">삭제</a>
+                </div>
+            {% endif %}
+            <p>by. {{ comment.user_id.username }}</p>
+            <p>{{ comment.contents }}</p>
+            <p><small class="text-body-secondary">Created at: {{ comment.created_at }}</small></p>
+            <hr>
+        {% endfor %}
+        
+        {% if request.session.username %}
+            <form method="POST" action="{% url 'board:comment_create' post_id=post.id %}?id={{ id }}&username={{ username }}">
+                {% csrf_token %}
+                <div id="comments" class="card-body">
+                    <textarea class="form-control ms-3" id="comment_content" name="comment_content" rows="3" required></textarea>
+                    <!-- for문  -->
+                    <input type="hidden" name="id" value="{{ id }}">
+                    <input type="hidden" name="username" value="{{ username }}">
+                </div>
+                <div style="text-align:right; margin-top:10px;">
+                    <button type="submit" class="btn btn-outline-primary">댓글 저장</button>
+                </div>
+            </form>
+        {% endif %}
+                
+    </div>
+
+    <!-- 게시글 작성자는 수정하기 삭제하기버튼 활성화 -->
+    {% if post.user_id.username == request.session.username %}
+    <div class="row container d-md-flex justify-content-md-center mt-5 mb-3">
+        <div class="col col-sm-2">
+            <a id="post_update" href="{% url 'board:update_page' post_id=post.id %}?id={{ id }}&username={{ username }}" class="btn btn-outline-success">수정하기</a>    
+        </div>
+        <div class="col col-sm-2">
+            <a id="post_delete" onclick="return deleteClick()" href="{% url 'board:post_delete' post_id=post.id %}?id={{ id }}&username={{ username }}"   class="btn btn-outline-danger">삭제하기</a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+
+<script>
+    var comment_boolean = true; 
+
+    function deleteClick(){
+        if(confirm('삭제하시겠습니까?')){
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    //댓글 한번만 작성 하도록 
+    function addInput(){
+    
+    }
+
+
+</script>
+<!-- 뒤로가기 -->
+<script>
+    function goBack() {
+      window.history.back();
+    }
+</script>
+{% endblock content %}

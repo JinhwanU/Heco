@@ -1,0 +1,440 @@
+{% extends 'base.html' %}
+
+{% block page_title %}
+<title>HECO-BOARD</title>
+{% endblock page_title %}
+
+{% block navbar %}
+<!-- 게시판 안내 글자 -->
+<div class="container d-md-flex mt-2 fw-medium">
+  <ul class="nav nav-tabs mb-2">
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'board:post_list' %}">전체게시판</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if category == 1 %}active{% endif %}" href="{% url 'board:category_post_list' 1 %}?id={{ id }}&username={{ username }}">식단</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if category == 2 %}active{% endif %}" href="{% url 'board:category_post_list' 2%}?id={{ id }}&username={{ username }}">운동 - 초급</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if category == 3 %}active{% endif %}" href="{% url 'board:category_post_list' 3 %}?id={{ id }}&username={{ username }}">운동 중급</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if category == 4 %}active{% endif %}" href="{% url 'board:category_post_list' 4 %}?id={{ id }}&username={{ username }}">운동 고급</a>
+    </li>
+  </ul>
+</div>
+{% endblock navbar %}
+
+{% block content %}
+<br><br><br><br><br>
+<!-- 이전 페이지 버튼 -->
+<div class="container mt-5 d-md-flex justify-content-md-start mb-3">
+  <div class="shadow-sm mt-4 ">
+    <button type="button" class="shadow-sm btn btn-outline-primary" onclick="goBack()">이전 페이지로 돌아가기</button>
+  </div>
+</div>
+
+<!-- main -->
+<div class="container row mx-auto">
+  <!-- col-sm-9, bmi, 게시글 -->
+  <div class="container col-sm-9">
+      <div class="container mx-auto mt-3 row-cols-1 mb-4">
+        <div class="shadow-sm border border-dark-subtle bg-body-tertiary bg-light rounded-3">
+          <p class="fw-medium fs-5 pt-2 text-body-primary text-center ">BMI 계산</p>
+            <!-- 입력 폼 -->
+            <form class="row mx-3" onsubmit="return calculateResult(event)">
+              <div class="col-md-3">
+                <label for="inputGender" class="form-label">성별</label>
+                <select id="inputGender" class="form-select">
+                  <option selected="selected" id="M">남</option>
+                  <option id="FM">여</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label for="inputAge" class="form-label">나이</label>
+                <input type="text" class="form-control" id="inputAge">
+              </div>
+              <div class="col-md-3">
+                <label for="inputHeight" class="form-label">키(cm)</label>
+                <input type="text" class="form-control" id="inputHeight">
+              </div>
+              <div class="col-md-3">
+                <label for="inputWeight" class="form-label">몸무게(kg)</label>
+                <input type="text" class="form-control" id="inputWeight">
+              </div>
+              <div class="d-md-flex justify-content-md-end mt-2">
+                <button type="submit" class="btn btn-primary ">조회하기</button>
+              </div>
+            </form>
+            <!-- 결과 출력 -->
+            <div class="row mx-5">
+              <label for="customRange1" class="form-label text-center">
+                <p class="text-center mt-3">결과 - 당신의 BMI 지수는 <span id="result">{{ bmi }}</span>
+                  <span id="resultText">{{ resultText }}</span>입니다.
+                </p>
+              </label>
+              <input type="range" class="form-range mb-2" id="customRange1" min="10" max="50" step="1" value="{{ result }}">
+              <div class="row mb-3 shadow-sm">
+                <div class="col bg-success text-center pb-2">저체중</div>
+                <div class="col bg-success bg-opacity-50 text-center pb-2">정상</div>
+                <div class="col bg-success bg-opacity-10 text-center pb-2">과체중</div>
+                <div class="col bg-warning-subtle text-center pb-2">비만</div>
+                <div class="col bg-warning text-center pb-2">고도비만</div>
+              </div>
+            </div>
+        </div>
+      </div>
+      <!-- 작성하기 버튼, 게시글 -->
+      <div class="container mx-auto mt-3 row" id="post-container">
+        <div class="col">
+          <!-- 작성하기 -->
+          {% if request.session.username %}
+            <!-- 회원 -->
+            <div class="d-grid shadow-sm gap-2 mb-4">
+              <a href="{% url 'board:create_page' %}?id={{ id }}&username={{ username }}" class="btn btn-outline-primary">게시글 작성하기</a>
+            </div>
+          {% else %}
+            <!-- 비회원 -->
+            <div class="d-grid shadow-sm gap-2 mb-4">
+              <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal">게시글 작성하기</button>
+            </div>
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-body">
+                    로그인 후 이용가능합니다.
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <a href="{% url 'common:login' %}" class="btn btn-primary">로그인하러가기</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+          <!-- 게시글 출력 -->
+          <div id="post-list-container" class="row row-cols-1 row-cols-md-3 g-2 mb-5">
+            <!-- page_obg 는 posts 에서 9개씩 얻어옴 -->
+            {% for post in page_obj %}
+              {% if post.category == 1 %}
+                <div id="diet" class="col mb-1">
+                  <div class="card h-100">
+                      <a href="{% url 'board:post_detail' post_id=post.id %}?id={{ id }}&username={{ username }}" class="text-decoration-none text-body">
+                          <div class="row">
+                              <div class="col">
+                                  <div class="image-section" style="padding-bottom: 50%; position: relative;">
+                                      <img src="{{ post.image_url }}" class="card-img-top" alt="" style="position: absolute; width: 100%; height: 100%;">
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="row">
+                              <div class="col">
+                                  <div class="card-body body-section" style="height: 40%;">
+                                      <p class="text-body-secondary">카테고리: {{ post.get_category_display }}</p>
+                                      <h5 class="card-title">{{ post.title }}</h5>
+                                      <p class="card-text">{{ post.contents }}</p>
+                                      <p class="card-text"><small class="text-body-secondary">{{ post.created_at }}</small></p>
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="row">
+                              <div class="col">
+                                  <div class="card-footer footer-section" style="height: 10%;">
+                                      <small class="card-text">by.{{ post.user_id.username }}</small>
+                                  </div>
+                              </div>
+                          </div>
+                      </a>
+                  </div>
+                </div>
+          
+              {% elif post.category == 2 %}
+                <div id = "beginner" class="col mb-1">
+                  <div class="card h-100">
+                    <a href="{% url 'board:post_detail' post_id=post.id %}?id={{ id }}&username={{ username }}" class="text-decoration-none text-body">
+                        <div class="row">
+                            <div class="col">
+                                <div class="image-section" style="padding-bottom: 50%; position: relative;">
+                                    <img src="{{ post.image_url }}" class="card-img-top" alt="" style="position: absolute; width: 100%; height: 100%;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="card-body body-section" style="height: 40%;">
+                                    <p class="text-body-secondary">카테고리: {{ post.get_category_display }}</p>
+                                    <h5 class="card-title">{{ post.title }}</h5>
+                                    <p class="card-text">{{ post.contents }}</p>
+                                    <p class="card-text"><small class="text-body-secondary">{{ post.created_at }}</small></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="card-footer footer-section" style="height: 10%;">
+                                    <small class="card-text">by. {{ post.user_id.username }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                  </div>
+                </div>
+              {% elif post.category == 3 %}
+                <div id = "intermediate" class="col">
+                  <div class="card h-100">
+                    <a href="{% url 'board:post_detail' post_id=post.id %}?id={{ id }}&username={{ username }}" class="text-decoration-none text-body">
+                        <div class="row">
+                            <div class="col">
+                                <div class="image-section" style="padding-bottom: 50%; position: relative;">
+                                    <img src="{{ post.image_url }}" class="card-img-top" alt="" style="position: absolute; width: 100%; height: 100%;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="card-body body-section" style="height: 40%;">
+                                    <p class="text-body-secondary">카테고리: {{ post.get_category_display }}</p>
+                                    <h5 class="card-title">{{ post.title }}</h5>
+                                    <p class="card-text">{{ post.contents }}</p>
+                                    <p class="card-text"><small class="text-body-secondary">{{ post.created_at }}</small></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="card-footer footer-section" style="height: 10%;">
+                                    <small class="card-text">by. {{ post.user_id.username }}</small>
+                                </div>
+                            </div>
+                        </div>
+                      </a>
+                  </div>
+                </div>
+              {% elif post.category == 4 %}
+                  <div id = "advanced" class="col">
+                    <div class="card h-100">
+                      <a href="{% url 'board:post_detail' post_id=post.id %}?id={{ id }}&username={{ username }}" class="text-decoration-none text-body">
+                          <div class="row">
+                              <div class="col">
+                                  <div class="image-section" style="padding-bottom: 50%; position: relative;">
+                                      <img src="{{ post.image_url }}" class="card-img-top" alt="" style="position: absolute; width: 100%; height: 100%;">
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="row">
+                              <div class="col">
+                                  <div class="card-body body-section" style="height: 40%;">
+                                      <p class="text-body-secondary">카테고리: {{ post.get_category_display }}</p>
+                                      <h5 class="card-title">{{ post.title }}</h5>
+                                      <p class="card-text">{{ post.contents }}</p>
+                                      <p class="card-text"><small class="text-body-secondary">{{ post.created_at }}</small></p>
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="row">
+                              <div class="col">
+                                  <div class="card-footer footer-section" style="height: 10%;">
+                                      <small class="card-text">by.{{ post.user_id.username }}</small>
+                                  </div>
+                              </div>
+                          </div>
+                      </a>
+                    </div>
+                  </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      <div class="pagination d-md-flex justify-content-md-center g-2 ">
+        {% if page_obj.has_previous %}
+          <a href="?page=1" class="btn btn-outline-primary me-2">&laquo; first</a>
+          <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-outline-primary me-2">previous</a>
+        {% endif %}
+  
+        {% for num in page_obj.paginator.page_range %}
+          {% if page_obj.number == num %}
+            <a href="?page={{ num }}" class="btn btn-primary me-2 ">{{ num }}</a>
+          {% else %}
+            <a href="?page={{ num }}" class="btn btn-outline-primary me-2">{{ num }}</a>
+          {% endif %}
+        {% endfor %}
+  
+        {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}" class="btn btn-outline-primary me-2">next</a>
+          <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-outline-primary me-2">last &raquo;</a>
+        {% endif %}
+      </div>
+  </div>
+  <!-- 오른쪽(식단 추천) -->
+  <div class="col-sm-3 order-lg-2 card h-100 mt-3 shadow-sm border border-dark-subtle bg-body-tertiary bg-light rounded-3">
+    <p class="text-center pt-2 mt-2">식단</p><hr>
+    <!-- 아침, 점심, 저녁 체크 -->
+    <fieldset class="row mb-3 input-group">
+      <legend class="col-form-label col-sm-3 pt-0">식사</legend>
+        <div class="form-check col-sm-3">
+          <input class="form-check-input" type="radio" name="gridRadios" id="meal1" value="breakfast" checked>
+          <label class="form-check-label" for="meal1">
+            아침
+          </label>
+        </div>
+        <div class="form-check col-sm-3">
+          <input class="form-check-input" type="radio" name="gridRadios" id="meal2" value="lunch">
+          <label class="form-check-label" for="meal2">
+            점심
+          </label>
+        </div>
+        <div class="form-check col-sm-3">
+          <input class="form-check-input" type="radio" name="gridRadios" id="meal3" value="dinner">
+          <label class="form-check-label" for="meal3">
+            저녁
+          </label>
+        </div>
+    </fieldset>
+    <!-- 칼로리 선택 -->
+    <div class="row mb-3 input-group mb-2">
+      <label for="cal" class="col-sm-3 col-form-label">칼로리</label>
+      <div class="col-sm-6">
+          <select class="form-select ms-3" multiple aria-label="cal" name="cal" id="cal" required>
+            <option value=4>200 ~ 300</option>
+            <option value=1>300 ~ 400</option>
+            <option value=2>400 ~ 500</option>
+            <option value=3>500 ~ 600</option>
+          </select>
+      </div>  
+      <div class="col-sm-2"> cal </div> 
+    </div>
+    <!-- 메뉴 -->
+    <fieldset class="row mb-3 mb-2 input-group">
+      <div class="col-sm-3 ms-3">
+        <legend class="col-form-label row pt-0">구성</legend>
+        <p class="row">복수선택O</p>
+      </div>
+      <div class = "col-sm-8">
+        <div class="form-check  pb-2">
+          <input class="form-check-input" type="checkbox" name="menu" id="menu1" value="ko">
+          <label class="form-check-label" for="menu1">
+            한식위주 - 밥or국
+          </label>
+        </div>
+        <div class="form-check pb-2">
+          <input class="form-check-input" type="checkbox" name="menu" id="menu2" value="western">
+          <label class="form-check-label" for="menu2">
+            양식
+          </label>
+        </div>
+        <div class="form-check pb-2">
+          <input class="form-check-input" type="checkbox" name="menu" id="menu3" value="salad">
+          <label class="form-check-label" for="menu3">
+            샐러드 종류
+          </label>
+        </div>
+        <div class="form-check pb-2">
+          <input class="form-check-input" type="checkbox" name="menu" id="menu4" value="sandwich">
+          <label class="form-check-label" for="menu4">
+            샌드위치 종류
+          </label>
+        </div>
+        <div class="form-check pb-2">
+          <input class="form-check-input" type="checkbox" name="menu" id="menu5" value="yogurt">
+          <label class="form-check-label" for="menu5">
+            요거트 종류
+          </label>
+        </div>
+        <div class="form-check pb-2">
+          <input class="form-check-input" type="checkbox" name="menu" id="menu6" value="protein">
+          <label class="form-check-label" for="menu6">
+            단백질
+          </label>
+        </div>
+      </div>
+    </fieldset>
+    <!-- 제출 버튼-->
+    <div class="container d-md-flex justify-content-md-center mb-3">
+      <a href="" type="submit" class="btn btn-outline-primary">제출하기</a>
+    </div>
+    <hr>
+    <!-- gpt 결과 -->
+    <div class="container d-md-flex justify-content-md-center mb-3 ">
+       <div class="mb-3">
+        <label for="gpt" class="form-label">GPT 추천 식단 </label>
+        <textarea class="form-control" id="gpt">
+          
+        </textarea>
+      </div>
+    </div>
+  </div>
+  
+</div>
+
+<!-- script 부분 -->
+<!-- BMI 계산 처리 -->
+<script>
+  function calculateResult(event) {
+    event.preventDefault(); // 폼 전송 취소
+
+    // 사용자 입력값 가져오기
+    const gender = document
+      .getElementById('inputGender')
+      .value;
+    const age = Number(document.getElementById('inputAge').value);
+    const height = Number(document.getElementById('inputHeight').value);
+    const weight = Number(document.getElementById('inputWeight').value);
+
+    // 계산 수행
+    const bmi = weight / ((height / 100) ** 2);
+    const minWeight = (18.5 * (height / 100) ** 2).toFixed();
+    const maxWeight = (24.9 * (height / 100) ** 2).toFixed(1);
+
+    // 검사 결과 계산
+    let resultText;
+    let resultColor;
+    if (bmi < 18.5) {
+      resultText = '저체중';
+      resultColor = 'bg-success';
+    } else if (bmi < 25) {
+      resultText = '정상';
+      resultColor = 'success bg-opacity-50';
+    } else if (bmi < 30) {
+      resultText = '과체중';
+      resultColor = 'success bg-opacity-10';
+    } else if (bmi < 35) {
+      resultText = '비만';
+      resultColor = 'warning-subtle';
+    } else {
+      resultText = '고도비만';
+      resultColor = 'warning';
+    }
+
+    // 결과 표시
+    const resultElem = document.getElementById('result');
+    resultElem.textContent = bmi.toFixed(1);
+
+    const resultTextElem = document.getElementById('resultText');
+    resultTextElem.textContent = resultText;
+
+    const resultRangeElem = document.getElementById('customRange1');
+    resultRangeElem.value = bmi.toFixed(1);
+
+    const resultContainerElem = document.getElementById('resultContainer');
+
+    // 결과 보여주기
+
+
+    // BMI 값 반환
+    return bmi;
+  }
+</script>
+
+<!-- 뒤로가기 -->
+<script>
+  function goBack() {
+    window.history.back();
+  }
+</script>
+
+
+{% endblock content%}

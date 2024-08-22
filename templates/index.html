@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block page_title %}
+  <title>HECO</title>
+{% endblock page_title %}
+
+{% block content %}
+<br>
+  <!-- 1단락 -->
+<div class="container mx-auto mt-5 pt-1 mb-5"  >
+  <div class="row mt-3 pt-5 mb-5 ">
+    <div class="py-5 col-lg-6 pt-4 order-2 order-lg-1 flex-column" >
+      <br><br><br>
+      <p style="font-size: 45px;" class="fw-bold">건강한 몸은 <br>
+      <p style="font-size: 45px;" class="fw-bold d-flex justify-content-md-end"> HECO에서 시작됩니다.</p>
+      </p>
+      <h4 class="lh-base mb-5 d-flex "><hr>
+        건강한 몸을 가지고 싶으신가요?  지금 바로 HECO와 함께 운동과 식단에 대해 알아볼 수 있습니다.<br>
+      </h4>
+      <div class="d-flex justify-content-md-center ">
+        <a class="btn btn-primary col-sm-7 shadow-sm" href="{% url 'common:signup' %}">지금 시작하세요</a>
+      </div>
+    </div>
+    <div class="col-lg-6 shadow pt-4 order-1 order-lg-2 py-9">
+      <img src="{% static 'images/index_03.jpg' %}" class="img-fluid" alt=""><br>
+    </div>
+  </div>
+  <br>
+</div>
+
+<!-- 2단락 시작 -->
+<div class="container">
+  <div class="row mb-5">
+    <h3 class="text-center fw-bold pb-2"> 게시판 안내 </h4><hr><br>
+    <div class="col-xl-6 col-lg-6 shadow d-flex justify-content-center align-items-stretch position-relative">
+      <img src="{% static 'images/index_01.jpg' %}" class="img-fluid " alt="">
+    </div>
+    <div class="col-xl-6 col-lg-5 d-flex flex-column align-items-stretch justify-content-center py-5 px-lg-5">
+      <a class="link-dark "href="{% url 'board:category_post_list' 1 %}?id={{ id }}&username={{ username }}">
+        <h4>식단 게시판</h4>
+      </a>
+      <p class="fs-5">
+        잘먹은게 중요합니다. 사람들과 식단을 공유하며 어떤것을 어떻게 먹어야하는지 알 수 있습니다. </p>
+      <p class="fs-6 fw-bold">#식단#기록#해독주스#단백질#쉐이크#삼시세끼#닭가슴살#멈춰</p>
+      <br><br>
+      <a class="link-dark " href="{% url 'board:category_post_list' 2%}?id={{ id }}&username={{ username }}">
+        <h4>운동 게시판</h4>
+      </a>
+      <p class="fs-5"> 사람들의 노하우가 담겨있는 운동일일지를 공유하며 나에게 알맞는 운동을 알 수 있습니다.</p>
+      <p class="fs-6 fw-bold">#오운완#인증#헬스#헬린이#헬창#3대500#같이#운동해요</p>
+    </div>
+  </div>
+</div>
+<br>
+<!-- 3단락 -->
+<div class="container">
+  <div class="row mt-2 mb-5">
+    <h3 class="text-center fw-bold pb-2"> 지원 서비스</h4><hr>
+    <div class="col-sm-4 mb-5 mt-3">
+      <div class="card  shadow">
+        <h4 class="card-title text-center fw-medium mb-2 mt-3">체지방 측정</h4>
+        <div class="card-body">
+          <img src="{% static 'images/index_bmi.jpg' %}" class="card-img-top mb-2" alt="...">
+          <p class="card-tex fs-5">신체정보로 측정 받아보세요 적절한 식단과 운동을 계획하는데 도움이 됩니다.</p>
+          <a href="{% url 'board:post_list' %}" class="btn btn-primary">BMI 계산기</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-4 mb-5 mt-3">
+      <div class="card shadow">
+        <h4 class="card-title text-center fw-medium mb-2 mt-3">GPT 챗봇한테 식단추천 받기</h4>
+        <div class="card-body">
+          <img src="{% static 'images/index_diet.jpg' %}" class="card-img-top mb-2" alt="...">
+          <p class="card-text fs-5">식사 시간, 음식 종류, 칼로리 등을 선택하여 GPT에게 식단추천을 받아보세요.</p>
+          <a href="{% url 'board:post_list' %}" class="btn btn-primary">식단추천 받기</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-4 mb-5 mt-3">
+      <div class="card shadow">
+        <h4 class="card-title text-center fw-medium mb-2 mt-3">헬스장 찾기</h4>
+        <div class="card-body">
+          <img src="{% static 'images/index_gym.jpg' %}" class="card-img-top mb-2" alt="...">
+          <p class="card-text fs-5">kakao map api를 통해 나의 위치를 기반으로한 근처 헬스장을 찾아보세요.</p>
+          <a href="/" class="btn btn-primary">근처 헬스장 찾기</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 4단락 -->
+<div class="container">
+  <div class="row g-4 mt-2 mb-5 d-flex justify-content-md-center">
+    <p style="font-size: 30px;" class="lh-lg shadow-sm fw-medium text-center"> 
+      매일 사용자들은 HECO를 통해 목표를 달성합니다. <br>
+      미래를 향한 여정에 동참해 보세요.<br>
+      HECO의 많은 사람들은 여러분이 식단과 운동을 공유하기를 기다리고 있습니다.<br>
+      <br>
+    </p>
+    <div class="row mt-5 mb-5 flex justify-content-md-center ">
+      <a class="btn btn-outline-white col-sm-4 shadow-sm me-2 fw-bolder fs-3" href="{% url 'common:signup' %}">HECO</a>
+    </div>
+  </div>      
+</div>
+{% endblock %}

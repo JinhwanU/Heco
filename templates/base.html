@@ -1,0 +1,117 @@
+</html><!Doctype html>
+<html lang="ko">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    {% block page_title %}
+      <title>HECO</title>
+    {% endblock page_title %}
+  </head>
+
+  <body>
+    <!-- HTML 코드 -->
+    <header>
+      <nav class="navbar shadow-sm fixed-top bg-body-tertiary bg-light">
+        <!-- Top navigaton - 앱 이름, 로그인, 회원가입 버튼 -->
+        <div class="container-fluid">
+          <a class="navbar-brand fs-3 ms-1 px-md-3 fw-bolder text-primary" href="{% url 'home' %}">HECO </a>
+          {% if request.session.username %}
+            <form class="d-flex justify-content-md-end">
+              <a href="{% url 'common:logout' %}" class="fw-medium btn btn-outline-success me-2" type="button">로그아웃</a>
+            </form>
+          {% else %}
+            <form class="d-flex justify-content-md-end">
+              <a href="{% url 'common:login' %}" class="fw-medium btn btn-outline-success me-2" type="button">로그인</a>
+              <a href="{% url 'common:signup' %}" class="fw-medium btn btn-outline-success me-2" type="button">회원가입</a>
+            </form>
+          {% endif %}
+        </div>
+        <!-- 페이지소개, 게시판(드롭다운 식단-운동), 헬스장 찾기 -->
+        <div class="container-fluid justify-content-center">
+          <ul class="nav nav-pills  fw-bold">
+            <li class="nav-item">
+              <a class="nav-link {% if request.path == '/' %}active{% endif %} px-5" aria-current="page" href="{% url 'home' %}">페이지 소개</a>
+            </li>
+            <li class="nav-item dropdown px-5">
+              <a class="nav-link {% if 'board' in request.path %}active{% endif %} px-5" href="{% url 'board:post_list' %}">게시판</a>
+            </li>
+            <li class="nav-item px-5">
+              <a class="nav-link" href="#">헬스장 찾기</a>
+            </li>
+          </ul>
+        </div>
+        {% block navbar %}
+        {% endblock navbar%}
+      </nav>
+    </header>
+
+    {% block content %}{% endblock content%}
+    
+    <footer class="bd-footer shadow-sm  py-1 py-md-1 mt-5 bg-body-tertiary">
+      <div class="container py-1 py-md-1 px-4 px-md-3 text-body-secondary">
+        <div class="row pt-5">
+          <div class="col-lg-3 mb-3">
+            <a class="d-inline-flex align-items-center mb-2 text-body-emphasis text-decoration-none" href="#">
+              <title>HECO - Healthy</title>
+              <span class="fs-5">HECO - Healthy Community</span>
+            </a>
+            <ul class="list-unstyled small">
+              <li class="mb-2">MC Cloud Major Project - Team2</li>
+              <li class="mb-2">Changmin, Sunghyun, Jinhwan, Taeeun</li>
+              <li class="mb-2">Github</li>
+              <li class="mb-2">Currently 2023</li>
+            </ul>
+          </div>
+          <div class="col-4 col-lg-4 offset-lg-1 mb-3">
+            <h5>Links </h5>
+            <ul class="list-unstyled">
+              <li class="mb-2">
+                <a class="link-underline-opacity-0 link-dark text-body-secondary" href="/">Home</a>
+                <a class="link-underline-opacity-0 link-dark text-body-secondary" href="/" disabled>/</a>
+                <a class="link-underline-opacity-0 link-dark text-body-secondary" href="/">헬스장 찾기</a>
+              </li>
+              <li class="mb-2 ">
+                <a class="link-underline-opacity-0 link-dark text-body-secondary" href="{% url 'board:category_post_list' 1 %}?id={{ id }}&username={{ username }}">식단 게시판</a>
+                <a class="link-underline-opacity-0 link-dark text-body-secondary" href="/" disabled>/</a>
+                <a class="link-underline-opacity-0 link-dark text-body-secondary" href="{% url 'board:category_post_list' 2 %}?id={{ id }}&username={{ username }}">운동 게시판</a>
+              </li>
+              <li class="mb-2">
+                <a class="link-underline-opacity-0 link-dark text-body-secondary" href="{% url 'board:post_list' %}">BMI 계산</a>
+                <a class="link-underline-opacity-0 link-dark text-body-secondary" href="/" disabled>/</a>
+                <a class="link-underline-opacity-0 link-dark text-body-secondary" href="{% url 'board:post_list' %}">식단 추천</a>
+              </li>
+            </ul>
+          </div>
+          <div class="col-4 col-lg-4 mb-3">
+            <h5>Youtube</h5>
+            <ul class="list-unstyled">
+              <li class="mb-2">
+                <a class="link-underline-opacity-0 link-dark text-body-secondary" href="https://www.youtube.com/@GYMJONGKOOK"target="_blank"rel="noopener">짐종국</a> 
+                <a class="link-underline-opacity-0 link-dark text-body-secondary" href="/" disabled>/</a>
+                <a class="link-underline-opacity-0 link-dark text-body-secondary" href="https://www.youtube.com/@physicalgallery_official">피지컬갤러리</a>
+              </li>
+              <li class="mb-2">
+                <a class="link-underline-opacity-0 link-dark text-body-secondary" href="https://www.youtube.com/@euddeume">힙으뜸</a>
+                <a class="link-underline-opacity-0 link-dark text-body-secondary" href="/" disabled>/</a>
+                <a class="link-underline-opacity-0 link-dark text-body-secondary" href="https://www.youtube.com/@AllblancTV">Allbalanc TV</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- js 리소스 -->
+    
+    <script src="https://unpkg.com/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+    
+
+  </body>
+
+</html>

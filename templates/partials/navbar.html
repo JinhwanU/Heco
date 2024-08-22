@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <li>
+
+    {% if user.is_authenticated %}
+      <a href="{% url 'common:logout' %}">
+        {{user.username}}
+        Logout
+      </a>
+    {% else %}
+      <a href="{% url 'common:login' %}">Login</a>
+    {% endif %}
+
+  </li>
+
+  <li>
+
+    {% if not user.is_authenticated %}
+      <a href="{% url 'common:signup' %}">Sign Up</a>
+    {% endif %}
+
+  </li>
+
+  <li>
+
+    <a href="">운동</a>
+
+  </li>
+
+  <li>
+
+    <a href="">식단</a>
+
+  </li>
+
+  <li>
+
+    <a href="">지도</a>
+
+  </li>
+{% endblock header %}
